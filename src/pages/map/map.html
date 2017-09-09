@@ -1,0 +1,14 @@
+<!-- <ion-header>
+  <ion-navbar>
+    <ion-title>
+      About
+    </ion-title>
+  </ion-navbar>
+</ion-header> -->
+
+<ion-content padding>
+  <ion-toolbar no-border-top>
+    <ion-searchbar (search)="plotLine()" [(ngModel)]="searchQuery"></ion-searchbar>
+  </ion-toolbar>
+  <div id="map"></div>
+</ion-content>
