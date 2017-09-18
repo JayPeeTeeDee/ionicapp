@@ -1,2 +1,19 @@
 page-profile {
+    progress {
+        height: 1.4em;
+        background-color: #f3f3f3;
+        border: 0;
+        border-radius: 9px;
+    }
+
+    progress[value]::-webkit-progress-bar {
+        background-color: #eee;
+        border-radius: 2px;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.25) inset;
+    }
+
+    .muted-comment {
+        color: #999999;
+        font-size: 0.75em;
+    }
 }
