@@ -3,8 +3,11 @@
 */
 
 import { Component } from '@angular/core';
-import { LoadingController } from 'ionic-angular';
+import { AlertController, LoadingController, ModalController } from 'ionic-angular';
 import L from 'leaflet';
+
+import { SearchModal } from './search-modal/search-modal';
+import { MapService } from './map.service';
 
 @Component({
   selector: 'page-map',
@@ -14,11 +17,19 @@ export class MapPage {
   center: any;
   map: any;
   maps: any;
+  activityIcon: string;
+  originData: any;
+  destinationData: any;
+  originMarker: any;
+  destinationMarker: any;
 
   routePlannerOptions: any;
 
   constructor(
-    public loadingCtrl: LoadingController
+    public alertCtrl: AlertController,
+    public loadingCtrl: LoadingController,
+    public modalCtrl: ModalController,
+    public mapService: MapService
   ) {
     // Could load night map if app used at night
     this.maps = {
@@ -31,16 +42,161 @@ export class MapPage {
   ngOnInit(): void {
     this.initMap();
     this.resetRoutePlanner();
+    this.originMarker = null;
+    this.destinationMarker = null;
   }
 
+  presentLocationModal(purpose: string) {
+    let text;
+    if (purpose == 'origin') {
+      text = this.routePlannerOptions.origin;
+    } else {
+      text = this.routePlannerOptions.destination;
+    }
+    if (text === "Earth" || text === "To the moon") {
+      text = ""
+    }
+    let searchModal = this.modalCtrl.create(SearchModal, { 'params': {'purpose': purpose, 'text': text }});
+    searchModal.onDidDismiss(res => {
+      if (res) {
+        console.log(res);
+        if (res.purpose == 'origin') {
+          this.originData = res.data;
+          this.routePlannerOptions.origin = this.originData.ADDRESS;
+          this.addOriginPin(this.originData.LATITUDE, this.originData.LONGITUDE);
+          this.routePlannerOptions.originCoords = this.originData.LONGITUDE + "," + this.originData.LATITUDE;
+        } else {
+          this.destinationData = res.data;
+          this.routePlannerOptions.destination = this.destinationData.ADDRESS;
+          this.addDestinationPin(this.destinationData.LATITUDE, this.destinationData.LONGITUDE);
+          this.routePlannerOptions.destinationCoords = this.destinationData.LONGITUDE + "," + this.destinationData.LATITUDE;
+        }
+      }
+    });
+    searchModal.present();
+  }
+
+  showActivityPrompt() {
+    let alert = this.alertCtrl.create();
+    alert.setTitle('Activity');
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Walk',
+      value: 'Walk',
+      checked: this.routePlannerOptions.activity === 'Walk'
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: 'Cycle',
+      value: 'Cycle',
+      checked: this.routePlannerOptions.activity === 'Cycle'
+    });
+
+    // alert.addInput({
+    //   type: 'radio',
+    //   label: 'Hiking',
+    //   value: 'Hiking',
+    //   checked: this.routePlannerOptions.activity === 'Hiking'
+    // });
+
+    alert.addButton('Cancel');
+    alert.addButton({
+      text: 'Ok',
+      handler: (data: any) => {
+        this.routePlannerOptions.activity = data;
+        this.updateIcon();
+      }
+    });
+
+    alert.present();
+  }
+
+  showDifficultyPrompt() {
+    let alert = this.alertCtrl.create();
+    alert.setTitle('Difficulty');
+
+    alert.addInput({
+      type: 'radio',
+      label: '1',
+      value: '1',
+      checked: this.routePlannerOptions.difficulty === '1'
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: '2',
+      value: '2',
+      checked: this.routePlannerOptions.difficulty === '2'
+    });
+
+    alert.addInput({
+      type: 'radio',
+      label: '3',
+      value: '3',
+      checked: this.routePlannerOptions.difficulty === '3'
+    });
+
+    alert.addButton('Cancel');
+    alert.addButton({
+      text: 'Ok',
+      handler: (data: any) => {
+        this.routePlannerOptions.difficulty = data;
+      }
+    });
+
+    alert.present();
+  }
+
+  showDistancePrompt(): void {
+    const alert = this.alertCtrl.create({
+      title: 'Distance (km)',
+      inputs: [
+        {
+          name: 'distance',
+          placeholder: '2.4'
+        }
+      ],
+      buttons: [
+        {
+          text: 'Cancel',
+          role: 'cancel',
+          handler: data => {
+            console.log('Cancel clicked');
+          }
+        },
+        {
+          text: 'Ok',
+          handler: data => {
+            this.routePlannerOptions.distance = data;
+          }
+        }
+      ]
+    });
+    alert.present();
+  }
+
+  private updateIcon(): void {
+    if (this.routePlannerOptions.activity == "Cycling") {
+      this.activityIcon = "bicycle";
+    } else if (this.routePlannerOptions.activity == "Jogging") {
+      this.activityIcon = "walk";
+    } else {
+      this.activityIcon = "trending-up";
+    }
+  }
+
+  // reset with dummy data
   resetRoutePlanner(): void {
     this.routePlannerOptions = {
       origin: "Earth",
       destination: "To the moon",
-      activity: "Cycling",
-      difficulty: "ezpz",
-      distance: "2.4km"
+      activity: "Walk",
+      difficulty: "1",
+      distance: "2.4"
     }
+    this.updateIcon();
   }
 
   initMap(): void {
@@ -60,21 +216,15 @@ export class MapPage {
     basemap.addTo(this.map);
   }
 
-  test(): void {
-    console.log("div clicked");
-  }
-
-  setUserOrigin(): void {
-    this.displayRouteOnMap();
-  }
-
-  setUserDestination(): void {
-    this.displayRouteOnMap();
-  }
-
   //when both origin and destination are set
   displayRouteOnMap(): void {
-    ;
+    this.mapService.generateRoute(this.routePlannerOptions)
+    .then(res => {
+      console.log(res);
+    })
+    .catch(err => {
+      console.log(err);
+    })
   }
 
   centerMapOnLocation(): void {
@@ -86,6 +236,20 @@ export class MapPage {
 
   showUserLocation(): void {
     ;
+  }
+
+  addOriginPin(lat, lng): void {
+    if (this.originMarker) {
+      this.map.removeLayer(this.originMarker);
+    }
+    this.originMarker = L.marker([lat, lng]).addTo(this.map);
+  }
+
+  addDestinationPin(lat, lng): void {
+    if (this.destinationMarker) {
+      this.map.removeLayer(this.destinationMarker);
+    }
+    this.destinationMarker = L.marker([lat, lng]).addTo(this.map);
   }
 
   // Should take in an array of lat lngs

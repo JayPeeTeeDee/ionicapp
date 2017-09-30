@@ -3,13 +3,13 @@
     <ion-thumbnail item-start>
       <img src="assets/placeholder/alpaca.png">
     </ion-thumbnail>
-    <h1>John Alpaca</h1>
-    <button ion-button clear item-end>Edit</button>
+    <h1>{{username}}</h1>
+    <button (click)="showNamePrompt()" ion-button clear item-end>Edit</button>
   </ion-item>
 
   <ion-list no-lines>
     <ion-list-header>
-      <h2>Stats</h2>
+      <h1>Stats</h1>
     </ion-list-header>
     <ion-item>
       Level 30 (style this to be a badge)
@@ -26,15 +26,14 @@
 
   <ion-list>
     <ion-list-header>
-      <h2>Achievements</h2>
+      <h1 style="display:inline;">Achievements</h1>
+      <a (click)="presentToast('hot damn')" *ngIf="unreadAchievements.length > 0" style="padding-left: 1em; display:inline;">
+        NEW <ion-badge item-end>{{unreadAchievements.length}}</ion-badge>
+      </a>
     </ion-list-header>
-    <ion-item>
+    <ion-item *ngFor="let achievement of achievements">
       <ion-icon name="trophy" item-start></ion-icon>
-      30 Hills Conquered
-    </ion-item>
-    <ion-item>
-      <ion-icon name="trophy" item-start></ion-icon>
-      100km Covered
+      {{achievement}}
     </ion-item>
   </ion-list>
 

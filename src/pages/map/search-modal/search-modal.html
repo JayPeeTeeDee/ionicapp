@@ -1,0 +1,17 @@
+<ion-content>
+  <ion-searchbar [(ngModel)]="text" (ionInput)="search($event)"></ion-searchbar>
+  <!-- <button ion-button round outline>
+    <span class="button-inner">
+      <ion-icon name="search"></ion-icon>
+    </span>
+  </button> -->
+  <ion-list>
+    <ion-item (click)="dismiss(result)" *ngFor="let result of results">
+      {{ result.ADDRESS }}
+    </ion-item>
+  </ion-list>
+
+  <!-- <ion-item>
+    <button (click)="search()" ion-button block>Start</button>
+  </ion-item> -->
+</ion-content>

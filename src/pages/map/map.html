@@ -2,46 +2,52 @@
   <!-- MAP -->
   <div id="map"></div>
   <!-- PLANNER -->
-  <div (click)="test()" class="route-planner-options">
+  <div class="route-planner-options">
     <ion-list no-lines>
-      <ion-item>
+
+      <ion-item (click)="presentLocationModal('origin')">
         <ion-icon name="arrow-dropleft-circle" item-start></ion-icon>
         Origin
         <ion-note item-end>
           {{routePlannerOptions.origin}}
         </ion-note>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="presentLocationModal('destination')">
         <ion-icon name="arrow-dropright-circle" item-start></ion-icon>
         Destination
         <ion-note item-end>
           {{routePlannerOptions.destination}}
         </ion-note>
       </ion-item>
-      <ion-item>
-        <ion-icon name="bicycle" item-start></ion-icon>
+
+      <ion-item (click)="showActivityPrompt()">
+        <ion-icon name="{{activityIcon}}" item-start></ion-icon>
         Activity
         <ion-note item-end>
           {{routePlannerOptions.activity}}
         </ion-note>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="showDifficultyPrompt()">
         <ion-icon name="podium" item-start></ion-icon>
         Difficulty Level
         <ion-note item-end>
           {{routePlannerOptions.difficulty}}
         </ion-note>
       </ion-item>
-      <ion-item>
+
+      <ion-item (click)="showDistancePrompt()">
         <ion-icon name="arrow-round-forward" item-start></ion-icon>
-        Distance
+        Distance (km)
         <ion-note item-end>
           {{routePlannerOptions.distance}}
         </ion-note>
       </ion-item>
+
     </ion-list>
     <ion-item>
-      <button ion-button block>Start</button>
+      <button (click)="displayRouteOnMap()" ion-button block>Start</button>
     </ion-item>
   </div>
 </ion-content>
