@@ -3,7 +3,7 @@
 */
 
 import { Component } from '@angular/core';
-import { AlertController, LoadingController, ModalController } from 'ionic-angular';
+import { AlertController, LoadingController, ModalController, ToastController } from 'ionic-angular';
 import L from 'leaflet';
 
 import { SearchModal } from './search-modal/search-modal';
@@ -29,7 +29,8 @@ export class MapPage {
     public alertCtrl: AlertController,
     public loadingCtrl: LoadingController,
     public modalCtrl: ModalController,
-    public mapService: MapService
+    public mapService: MapService,
+    public toastCtrl: ToastController
   ) {
     // Could load night map if app used at night
     this.maps = {
@@ -56,7 +57,7 @@ export class MapPage {
     if (text === "Earth" || text === "To the moon") {
       text = ""
     }
-    let searchModal = this.modalCtrl.create(SearchModal, { 'params': {'purpose': purpose, 'text': text }});
+    let searchModal = this.modalCtrl.create(SearchModal, { 'params': { 'purpose': purpose, 'text': text } });
     searchModal.onDidDismiss(res => {
       if (res) {
         console.log(res);
@@ -155,7 +156,7 @@ export class MapPage {
       inputs: [
         {
           name: 'distance',
-          placeholder: '2.4'
+          placeholder: this.routePlannerOptions.distance
         }
       ],
       buttons: [
@@ -169,7 +170,7 @@ export class MapPage {
         {
           text: 'Ok',
           handler: data => {
-            this.routePlannerOptions.distance = data;
+            this.routePlannerOptions.distance = data.distance;
           }
         }
       ]
@@ -219,12 +220,18 @@ export class MapPage {
   //when both origin and destination are set
   displayRouteOnMap(): void {
     this.mapService.generateRoute(this.routePlannerOptions)
-    .then(res => {
-      console.log(res);
-    })
-    .catch(err => {
-      console.log(err);
-    })
+      .then(res => {
+        console.log(res);
+        if (res.success) {
+          this.presentToast("Route successfully generated");
+        } else {
+          this.presentToast("Unable to generate route");
+        }
+      })
+      .catch(err => {
+        this.presentToast("Unable to generate route");
+        console.log(err);
+      })
   }
 
   centerMapOnLocation(): void {
@@ -284,6 +291,21 @@ export class MapPage {
       duration: 3000
     });
     loader.present();
+  }
+
+  presentToast(message) {
+    let toast = this.toastCtrl.create({
+      message: message,
+      duration: 3000,
+      cssClass: 'toaster-style',
+      position: 'middle'
+    });
+    toast.present();
+  }
+
+  dummyInfo():void {
+    console.log("dummy activated");
+    this.mapService.dummy();
   }
 
 }

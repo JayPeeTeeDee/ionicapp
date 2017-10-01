@@ -8,6 +8,7 @@ export class MapService {
     oneMapApiRoutes: any;
     backendUrl: String;
     backendRoutes: any;
+    route: any;
 
     constructor(
         private http: Http
@@ -19,7 +20,8 @@ export class MapService {
         this.backendUrl = "http://onemap.duckdns.org";
         this.backendRoutes = {
             getRoute: "/api/route"
-        }
+        };
+        this.route = null;
     }
 
     searchForLocation(searchText) {
@@ -44,17 +46,17 @@ export class MapService {
     }
 
     // /api/route?mode={mode}&start={start}&end={end}&dist={distance}&diff={difficulty}
-    generateRoute(data) {
+    generateRoute(data): Promise<any> {
         return new Promise((resolve, reject) => {
             console.log(this.backendUrl + this.backendRoutes.getRoute +
-                "?mode=" + data.activity +
+                "?mode=" + data.activity.toLowerCase() +
                 "&start=" + data.originCoords +
                 "&end=" + data.destinationCoords +
                 "&dist=" + data.distance +
                 "&diff=" + data.difficulty);
             this.http.get(
                 this.backendUrl + this.backendRoutes.getRoute +
-                "?mode=" + data.activity +
+                "?mode=" + data.activity.toLowerCase() +
                 "&start=" + data.originCoords +
                 "&end=" + data.destinationCoords +
                 "&dist=" + data.distance +
@@ -62,13 +64,38 @@ export class MapService {
             ).subscribe(
                 res => {
                     if (res.status === 200) {
-                        let result = res.json();
-                        resolve(result.results);
+                        if (res.json().length > 0) {
+                            this.route = res.json();
+                            console.log("PAOSJDPAS");
+                            console.log(this.route);
+                            resolve({ success: true });
+                        } else {
+                            resolve({ success: false });
+                        }
+                    } else {
+                        resolve({ success: false });
                     }
                 },
                 err => {
                     reject(err);
                 })
         });
+    }
+
+    dummy(): void {
+        this.http.get("http://onemap.duckdns.org/api/route?mode=walk&start=103.758,1.3563&end=103.764,1.36354&dist=3&diff=1")
+            .subscribe(
+            res => {
+                if (res.status === 200) {
+                    if (res.json().length > 0) {
+                        this.route = res.json();
+                        console.log("PAOSJDPAS");
+                        console.log(this.route);
+                    }
+                }
+            },
+            err => {
+                console.log(err);
+            })
     }
 }

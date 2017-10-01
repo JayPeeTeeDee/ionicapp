@@ -36,7 +36,8 @@ export class ProfilePage {
       let toast = this.toastCtrl.create({
         message: 'Achievement unlocked: ' + message,
         duration: 3000,
-        cssClass: 'toaster-style'
+        cssClass: 'toaster-style',
+        position: 'top'
       });
       toast.present();
     }

@@ -2,7 +2,7 @@
   <!-- MAP -->
   <div id="map"></div>
   <!-- PLANNER -->
-  <div class="route-planner-options">
+  <div (click)="dummyInfo()" class="route-planner-options">
     <ion-list no-lines>
 
       <ion-item (click)="presentLocationModal('origin')">
@@ -47,7 +47,7 @@
 
     </ion-list>
     <ion-item>
-      <button (click)="displayRouteOnMap()" ion-button block>Start</button>
+      <button (click)="displayRouteOnMap()" ion-button block>Generate</button>
     </ion-item>
   </div>
 </ion-content>
