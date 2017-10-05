@@ -17,7 +17,13 @@ page-profile {
         font-size: 0.75em;
     }
 }
-
+.circle-pic{
+    width:40px;
+    height:40px;
+    -webkit-border-radius: 50%;
+    border-radius: 50%;
+    border: 0.4px solid rgb(206, 216, 222);
+}
 // .toaster-style > div {
 //     background-color:#32db64!important;
 //     color: #333!important;

@@ -19,12 +19,48 @@ export class ProfilePage {
   ngOnInit(): void {
     this.username = "John Alpaca";
     this.achievements = [
-      "30 Hills Conquered",
-      "100km Covered"
+      {
+          name: "It begins with a single step",
+          description: "Travelled 1m"
+      },
+      {
+          name: "8 mile",
+          description: "Travelled 8 miles"
+      },
+      {
+          name: "Century",
+          description: "Travelled 100km"
+      },
+      {
+          name: "Taking off the training wheels",
+          description: "Completed a beginner route"
+      },
+      {
+          name: "Whoa, we're halfway there",
+          description: "Completed an intermediate route"
+      },
+      {
+          name: "Veni, Vidi, Vici",
+          description: "Completed an advanced route"
+      },
+      {
+          name: "Stairway to Heaven",
+          description: "Completed 10km worth of climbs"
+      },
+      {
+          name: "Are we there yet?",
+          description: "Travelled non-stop for 1 hour"
+      },
+      {
+          name: "Speed Devil",
+          description: "Attained a speed of 30km/h"
+      },
+      {
+          name: "A way of life",
+          description: "Completed 100 routes"
+      },
     ];
     this.unreadAchievements = [
-      "50 Hills Conquered",
-      "20 Routes Completed"
     ];
   }
 

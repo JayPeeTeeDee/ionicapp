@@ -37,37 +37,41 @@ export class HomePage {
   }
 
   ionViewDidEnter() {
-    if (!this.mapService.route) {
-      this.showGeneratePrompt();
-    } else {
-      this.addFeatureToMap(this.mapService.route);
-      //geotracker
-      this.geolocation.getCurrentPosition().then((resp) => {
-        // resp.coords.latitude
-        // resp.coords.longitude
-        // console.log(resp.coords);
-        this.map.panTo(new L.LatLng(resp.coords.latitude, resp.coords.longitude));
-      }).catch((error) => {
-        console.log('Error getting location', error);
-      });
+        if (!this.mapService.route) {
+          this.showGeneratePrompt();
+        } else {
+          let colourMap: string[] = ["#F0F7D4", "#B2D732", "#FE2712", "#347B98", "#092834"];
+          //for (let i in this.mapService.route) {
+            this.addFeatureToMap(this.mapService.route[0], colourMap[3]);
+          //}
+          //geotracker
+          this.geolocation.getCurrentPosition().then((resp) => {
+            // resp.coords.latitude
+            // resp.coords.longitude
+            // console.log(resp.coords);
+            this.map.panTo(new L.LatLng(resp.coords.latitude, resp.coords.longitude));
+          }).catch((error) => {
+            console.log('Error getting location', error);
+          });
 
-      let watch = this.geolocation.watchPosition();
-      watch.subscribe((data) => {
-        // data can be a set of coordinates, or an error (if an error occurred).
-        // data.coords.latitude
-        // data.coords.longitude
+          let watch = this.geolocation.watchPosition();
+          watch.subscribe((data) => {
+            // data can be a set of coordinates, or an error (if an error occurred).
+            // data.coords.latitude
+            // data.coords.longitude
+          });
+        }
+  }
+
+
+    addFeatureToMap(geojsonFeature, route_color): void {
+      let feature = L.geoJSON(geojsonFeature, {
+        color: route_color,
+        weight: 5
       });
+      feature.addTo(this.map);
+      this.map.fitBounds(feature.getBounds());
     }
-  }
-
-  addFeatureToMap(geojsonFeature): void {
-    let feature = L.geoJSON(geojsonFeature, {
-      color: "#FF0000",
-      weight: 5
-    });
-    feature.addTo(this.map);
-    this.map.fitBounds(feature.getBounds());
-  }
 
   initMap(): void {
     // From OneMap API docs

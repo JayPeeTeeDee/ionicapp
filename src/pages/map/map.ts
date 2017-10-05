@@ -120,21 +120,21 @@ export class MapPage {
 
     alert.addInput({
       type: 'radio',
-      label: '1',
+      label: 'Beginner',
       value: '1',
       checked: this.routePlannerOptions.difficulty === '1'
     });
 
     alert.addInput({
       type: 'radio',
-      label: '2',
+      label: 'Intermediate',
       value: '2',
       checked: this.routePlannerOptions.difficulty === '2'
     });
 
     alert.addInput({
       type: 'radio',
-      label: '3',
+      label: 'Advanced',
       value: '3',
       checked: this.routePlannerOptions.difficulty === '3'
     });
@@ -208,7 +208,8 @@ export class MapPage {
       detectRetina: true,
       attribution: 'Map data © contributors, <a href="http://SLA.gov.sg">Singapore Land Authority</a>',
       maxZoom: 18,
-      minZoom: 11
+      minZoom: 11,
+      subdomains: ['a', 'b', 'c']
     });
 
     let attribution = this.map.attributionControl;
@@ -219,8 +220,14 @@ export class MapPage {
 
   //when both origin and destination are set
   displayRouteOnMap(): void {
+    // Route generation will take a while, show loading
+    let loader = this.loadingCtrl.create({
+      content: "Generating Route"
+    });
+    loader.present();
     this.mapService.generateRoute(this.routePlannerOptions)
       .then(res => {
+        loader.dismiss();
         console.log(res);
         if (res.success) {
           this.presentToast("Route successfully generated");
@@ -229,6 +236,7 @@ export class MapPage {
         }
       })
       .catch(err => {
+        loader.dismiss();
         this.presentToast("Unable to generate route");
         console.log(err);
       })
@@ -285,18 +293,11 @@ export class MapPage {
     this.map.fitBounds(polyline.getBounds());
   }
 
-  presentLoading() {
-    let loader = this.loadingCtrl.create({
-      content: "Please wait...",
-      duration: 3000
-    });
-    loader.present();
-  }
 
   presentToast(message) {
     let toast = this.toastCtrl.create({
       message: message,
-      duration: 3000,
+      duration: 2000,
       cssClass: 'toaster-style',
       position: 'middle'
     });

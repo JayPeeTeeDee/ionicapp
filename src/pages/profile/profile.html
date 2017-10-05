@@ -1,7 +1,7 @@
 <ion-content>
   <ion-item>
     <ion-thumbnail item-start>
-      <img src="assets/placeholder/alpaca.png">
+      <img class="circle-pic" src="assets/placeholder/alpaca.png">
     </ion-thumbnail>
     <h1>{{username}}</h1>
     <button (click)="showNamePrompt()" ion-button clear item-end>Edit</button>
@@ -12,10 +12,10 @@
       <h1>Stats</h1>
     </ion-list-header>
     <ion-item>
-      Level 30 (style this to be a badge)
+      <h2>Level 30</h2>
     </ion-item>
     <ion-item>
-      <progress value="10" max="100"></progress>
+      <progress value="40" max="100"></progress>
       <br>
       <div class="muted-comment">
         322 more exp to the next level
@@ -33,7 +33,8 @@
     </ion-list-header>
     <ion-item *ngFor="let achievement of achievements">
       <ion-icon name="trophy" item-start></ion-icon>
-      {{achievement}}
+      <h2> {{achievement.name}} </h2>
+      <p> {{achievement.description}} </p>
     </ion-item>
   </ion-list>
 
