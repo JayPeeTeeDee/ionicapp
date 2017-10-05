@@ -51,7 +51,10 @@ export class HomePage {
           // console.log(sp);
 
 	  //for (let i in this.mapService.route) {
+            this.map.remove();
+            this.initMap();
             this.addFeatureToMap(this.mapService.route[0], colourMap[3]);
+
           //}
           //geotracker
           this.geolocation.getCurrentPosition().then((resp) => {
@@ -108,6 +111,7 @@ export class HomePage {
         // });
       }
     });
+
       feature.addTo(this.map);
       this.map.fitBounds(feature.getBounds());
     }
@@ -120,7 +124,8 @@ export class HomePage {
       detectRetina: true,
       attribution: 'Map data © contributors, <a href="http://SLA.gov.sg">Singapore Land Authority</a>',
       maxZoom: 18,
-      minZoom: 11
+      minZoom: 11,
+      subdomains: ['a', 'b', 'c']
     });
 
     let attribution = this.map.attributionControl;
