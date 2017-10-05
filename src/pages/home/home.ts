@@ -5,6 +5,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import L from 'leaflet';
 
 import { MapService } from '../map/map.service';
+import { MapPage } from '../map/map';
 
 @Component({
   selector: 'page-home',
@@ -19,6 +20,7 @@ export class HomePage {
   constructor(
     public alertCtrl: AlertController,
     public mapService: MapService,
+    public mapPage: MapPage,
     public navCtrl: NavController,
     private geolocation: Geolocation
   ) {
@@ -40,8 +42,11 @@ export class HomePage {
         if (!this.mapService.route) {
           this.showGeneratePrompt();
         } else {
+	  this.mapPage.originMarker.addTo(this.map);
+          this.mapPage.destinationMarker.addTo(this.map);
           let colourMap: string[] = ["#F0F7D4", "#B2D732", "#FE2712", "#347B98", "#092834"];
-          //for (let i in this.mapService.route) {
+          
+	  //for (let i in this.mapService.route) {
             this.addFeatureToMap(this.mapService.route[0], colourMap[3]);
           //}
           //geotracker
@@ -66,9 +71,18 @@ export class HomePage {
 
     addFeatureToMap(geojsonFeature, route_color): void {
       let feature = L.geoJSON(geojsonFeature, {
-        color: route_color,
-        weight: 5
-      });
+      color: route_color,
+      weight: 5,
+      pointToLayer: function (feature, latlng) {
+        return L.circleMarker(latlng, {
+          radius: 8,
+          fillColor: "#22cccc",
+          color: "#000",
+          weight: 1,
+          opacity: 1,
+          fillOpacity: 0.8
+        });
+    });
       feature.addTo(this.map);
       this.map.fitBounds(feature.getBounds());
     }
