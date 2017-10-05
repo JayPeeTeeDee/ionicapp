@@ -65,8 +65,9 @@ export class MapService {
                 res => {
                     if (res.status === 200) {
                         if (res.json().length > 0) {
+                            
                             this.route = res.json();
-                            console.log("PAOSJDPAS");
+
                             console.log(this.route);
                             resolve({ success: true });
                         } else {

@@ -5,7 +5,7 @@ import { Geolocation } from '@ionic-native/geolocation';
 import L from 'leaflet';
 
 import { MapService } from '../map/map.service';
-import { MapPage } from '../map/map';
+// import { MapPage } from '../map/map';
 
 @Component({
   selector: 'page-home',
@@ -20,7 +20,7 @@ export class HomePage {
   constructor(
     public alertCtrl: AlertController,
     public mapService: MapService,
-    public mapPage: MapPage,
+    // public mapPage: MapPage,
     public navCtrl: NavController,
     private geolocation: Geolocation
   ) {
@@ -42,28 +42,52 @@ export class HomePage {
         if (!this.mapService.route) {
           this.showGeneratePrompt();
         } else {
-	  this.mapPage.originMarker.addTo(this.map);
-          this.mapPage.destinationMarker.addTo(this.map);
+	  // this.mapPage.originMarker.addTo(this.map);
+   //        this.mapPage.destinationMarker.addTo(this.map);
           let colourMap: string[] = ["#F0F7D4", "#B2D732", "#FE2712", "#347B98", "#092834"];
           
+          // var sp = this.mapService.result[0];
+          // var ep.this.result[1];
+          // console.log(sp);
+
 	  //for (let i in this.mapService.route) {
             this.addFeatureToMap(this.mapService.route[0], colourMap[3]);
           //}
           //geotracker
           this.geolocation.getCurrentPosition().then((resp) => {
-            // resp.coords.latitude
-            // resp.coords.longitude
+            // var lat = resp.coords.latitude;
+            // var lon = resp.coords.longitude;
+            // var coords = new L.LatLng(lat, lon);
             // console.log(resp.coords);
+            
             this.map.panTo(new L.LatLng(resp.coords.latitude, resp.coords.longitude));
           }).catch((error) => {
             console.log('Error getting location', error);
           });
 
+          var dummy = new L.LatLng(1.3635492491975707,103.82492065429688);
+          var pos = L.circleMarker(dummy, {
+              radius: 8,
+              fillColor: "#dd22dd",
+              color: "#fff",
+              weight: 1,
+              opacity: 1,
+              fillOpacity: 0.8
+            });
+
+          
+          pos.addTo(this.map);
+
           let watch = this.geolocation.watchPosition();
           watch.subscribe((data) => {
             // data can be a set of coordinates, or an error (if an error occurred).
-            // data.coords.latitude
-            // data.coords.longitude
+            var lat = data.coords.latitude;
+            var lon = data.coords.longitude;
+            var new_coords = new L.LatLng(lat, lon);
+
+            pos.setLatLng(new_coords);
+            console.log('update');
+
           });
         }
   }
@@ -74,14 +98,15 @@ export class HomePage {
       color: route_color,
       weight: 5,
       pointToLayer: function (feature, latlng) {
-        return L.circleMarker(latlng, {
-          radius: 8,
-          fillColor: "#22cccc",
-          color: "#000",
-          weight: 1,
-          opacity: 1,
-          fillOpacity: 0.8
-        });
+        // return L.circleMarker(latlng, {
+        //   radius: 8,
+        //   fillColor: "#22cccc",
+        //   color: "#000",
+        //   weight: 1,
+        //   opacity: 1,
+        //   fillOpacity: 0.8
+        // });
+      }
     });
       feature.addTo(this.map);
       this.map.fitBounds(feature.getBounds());
